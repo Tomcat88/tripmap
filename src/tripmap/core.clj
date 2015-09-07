@@ -15,18 +15,29 @@
 
 (defn get-direction-query 
   [{start :from end :to waypoints :waypoints}]
-  (str directions-endpoint "origin=" start "&destination=" end "&waypoints=" (clojure.string/join "|" waypoints)))
+  (str directions-endpoint 
+       "origin=" start 
+       "&destination=" end 
+       "&waypoints=" (clojure.string/join "|" waypoints)))
 
 (defn get-map-query
   [{points :points}]
-  (str map-endpoint "path=enc:" (codec/percent-encode points)))
+  (str "path=enc:" (codec/percent-encode points)))
 
-(defn get-direction-query-list
-  [{options :options trip :trip}]
+(defn get-direction-query-map
+  [{{width :width height :height :or {width 800 height 800}} :options 
+    {start :start end :end days :days} :trip}]
   (reduce-kv (fn [urls day locations]
                (merge-with concat
-                        urls
-                        {day (map get-direction-query locations)})) {} (:days trip)))
+                           urls
+                           {day (mapv get-direction-query locations)})) {} days))
+
+(defn get-overview-polyline-map
+  [day-urls-map]
+  (reduce-kv (fn [points day urls]
+               (assoc points day
+                      (mapv (comp get-overview-polyline get-json) urls))) 
+             {} day-urls-map))
 
 
 
