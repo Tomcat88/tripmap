@@ -56,15 +56,16 @@
 
 (defn -main
   [& args]
-  (let [{
-         {width :width height :height output :output} :options
-         trip :trip} (load-trip "/home/thomas/Documenti/trips/trip1.json")
-         map-url ((json->map width height) trip)
-         img (get-map map-url)
-        ]
-    ;;(println ((json->map width height) trip))
-    (save-img img output)
-    ))
+  (doseq [filename args]
+    (let [{
+           {width :width height :height output :output} :options
+           trip :trip} (load-trip filename)
+           map-url ((json->map width height) trip)
+           img (get-map map-url)
+           ]
+      (println filename " processed...\nSaving img trip to " output "\n")
+      ;;(println ((json->map width height) trip))
+      (save-img img output))))
 
 
 
