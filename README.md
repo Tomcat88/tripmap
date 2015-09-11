@@ -32,3 +32,7 @@ The input JSON must be something like this one :
     }
 
 Right now the start and end attributes are not used.
+
+The result should look like this:
+
+![Trip](resources/trip1.png)
